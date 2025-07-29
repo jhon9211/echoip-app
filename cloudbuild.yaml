@@ -1,0 +1,35 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '--build-arg'
+    - 'MAXMIND_ACCOUNT_ID=${_MAXMIND_ACCOUNT_ID}' # Cloud Build variable
+    - '--build-arg'
+    - 'MAXMIND_LICENSE_KEY=${_MAXMIND_LICENSE_KEY}' # Cloud Build variable
+    - '-t'
+    - 'gcr.io/${PROJECT_ID}/echoip'
+    - '.'
+  id: 'Build Docker Image with Latest DB'
+  # Dockerfile mein MaxMind download command honi chahiye
+
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'push'
+    - 'gcr.io/${PROJECT_ID}/echoip'
+  id: 'Push Image to GCR'
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+    - 'run'
+    - 'deploy'
+    - 'echoip' # Aapke Cloud Run service ka naam
+    - '--image'
+    - 'gcr.io/${PROJECT_ID}/echoip'
+    - '--project'
+    - '${PROJECT_ID}'
+    - '--platform'
+    - 'managed'
+    - '--region'
+    - 'us-central1' # Aapki Cloud Run service ki region
+    - '--allow-unauthenticated' # Agar aapki service public hai
+  id: 'Deploy to Cloud Run'
