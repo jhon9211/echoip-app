@@ -11,6 +11,8 @@ steps:
     - '.'
   id: 'Build_New_Image_With_Latest_MaxMind_DB'
   timeout: '900s'
+  # --- ADD THIS LINE ---
+  env: ['DOCKER_BUILDKIT=1'] # This enables BuildKit for this step
 
 - name: 'gcr.io/cloud-builders/docker'
   args:
@@ -34,5 +36,4 @@ steps:
     - '--allow-unauthenticated'
   id: 'Deploy_To_Cloud_Run'
 
-# --- ADD THIS LINE ---
-logsBucket: 'gs://find-my-ip-467322-cloudbuild-logs' # Replace with your actual bucket name
+logsBucket: 'gs://find-my-ip-467322-cloudbuild-logs' # Ensure this is your correct bucket name
