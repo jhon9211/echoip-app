@@ -1,20 +1,16 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash' # Use bash to set env var directly before command
   args:
-    # --- MODIFY THESE LINES ---
-    - 'build'
-    - '--build-arg'
-    - 'MAXMIND_ACCOUNT_ID=${_MAXMIND_ACCOUNT_ID}'
-    - '--build-arg'
-    - 'MAXMIND_LICENSE_KEY=${_MAXMIND_LICENSE_KEY}'
-    - '--build-arg' # Add this if needed by your Dockerfile for DOCKER_BUILDKIT
-    - 'DOCKER_BUILDKIT=1' # Explicitly pass BuildKit as a build-arg
-    - '-t'
-    - 'gcr.io/${PROJECT_ID}/echoip'
-    - '.'
+    - '-c'
+    - |
+      export DOCKER_BUILDKIT=1
+      docker build \
+        --build-arg MAXMIND_ACCOUNT_ID=${_MAXMIND_ACCOUNT_ID} \
+        --build-arg MAXMIND_LICENSE_KEY=${_MAXMIND_LICENSE_KEY} \
+        -t gcr.io/${PROJECT_ID}/echoip .
   id: 'Build_New_Image_With_Latest_MaxMind_DB'
   timeout: '900s'
-  # Remove 'env: ['DOCKER_BUILDKIT=1']' from here if it was still present
 
 - name: 'gcr.io/cloud-builders/docker'
   args:
@@ -38,4 +34,4 @@ steps:
     - '--allow-unauthenticated'
   id: 'Deploy_To_Cloud_Run'
 
-logsBucket: 'gs://find-my-ip-467322-cloudbuild-logs' # Ensure this is your correct bucket name
+logsBucket: 'gs://find-my-ip-467322-cloudbuild-logs'
