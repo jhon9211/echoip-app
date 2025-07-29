@@ -11,8 +11,7 @@ steps:
     - '.'
   id: 'Build_New_Image_With_Latest_MaxMind_DB'
   timeout: '900s'
-  # --- ADD THIS LINE ---
-  env: ['DOCKER_BUILDKIT=1'] # This enables BuildKit for this step
+  # Remove 'env: ['DOCKER_BUILDKIT=1']' from here
 
 - name: 'gcr.io/cloud-builders/docker'
   args:
@@ -37,3 +36,13 @@ steps:
   id: 'Deploy_To_Cloud_Run'
 
 logsBucket: 'gs://find-my-ip-467322-cloudbuild-logs' # Ensure this is your correct bucket name
+
+# --- ADD THESE LINES AT THE VERY END, OR AT THE TOP LEVEL ---
+options:
+  requestedWorkerOption:
+    pool:
+      workerConfig:
+        machineType: 'e2-medium' # You can choose a suitable machine type
+  # This is the key part to enable BuildKit globally for the build
+  docker:
+    enableBuildkit: true
