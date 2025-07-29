@@ -3,26 +3,26 @@ steps:
   args:
     - 'build'
     - '--build-arg'
-    - 'MAXMIND_ACCOUNT_ID=${_MAXMIND_ACCOUNT_ID}' # Cloud Build variable
+    - 'MAXMIND_ACCOUNT_ID=${_MAXMIND_ACCOUNT_ID}'
     - '--build-arg'
-    - 'MAXMIND_LICENSE_KEY=${_MAXMIND_LICENSE_KEY}' # Cloud Build variable
+    - 'MAXMIND_LICENSE_KEY=${_MAXMIND_LICENSE_KEY}'
     - '-t'
     - 'gcr.io/${PROJECT_ID}/echoip'
     - '.'
-  id: 'Build Docker Image with Latest DB'
-  # Dockerfile mein MaxMind download command honi chahiye
+  id: 'Build_New_Image_With_Latest_MaxMind_DB'
+  timeout: '900s'
 
 - name: 'gcr.io/cloud-builders/docker'
   args:
     - 'push'
     - 'gcr.io/${PROJECT_ID}/echoip'
-  id: 'Push Image to GCR'
+  id: 'Push_Image_To_Container_Registry'
 
 - name: 'gcr.io/cloud-builders/gcloud'
   args:
     - 'run'
     - 'deploy'
-    - 'echoip' # Aapke Cloud Run service ka naam
+    - 'echoip'
     - '--image'
     - 'gcr.io/${PROJECT_ID}/echoip'
     - '--project'
@@ -30,6 +30,9 @@ steps:
     - '--platform'
     - 'managed'
     - '--region'
-    - 'us-central1' # Aapki Cloud Run service ki region
-    - '--allow-unauthenticated' # Agar aapki service public hai
-  id: 'Deploy to Cloud Run'
+    - 'us-central1'
+    - '--allow-unauthenticated'
+  id: 'Deploy_To_Cloud_Run'
+
+# --- ADD THIS LINE ---
+logsBucket: 'gs://your-project-id-cloudbuild-logs' # Replace with your actual bucket name
