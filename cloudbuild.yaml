@@ -35,4 +35,4 @@ steps:
   id: 'Deploy_To_Cloud_Run'
 
 # --- ADD THIS LINE ---
-logsBucket: 'gs://your-project-id-cloudbuild-logs' # Replace with your actual bucket name
+logsBucket: 'gs://find-my-ip-467322-cloudbuild-logs' # Replace with your actual bucket name
